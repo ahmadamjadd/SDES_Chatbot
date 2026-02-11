@@ -6,10 +6,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        620,
-        500
+        32,
+        416
       ],
-      "id": "3c40f106-32d5-45d8-bd7d-3c9ddc14bd4f",
+      "id": "8a983112-d58a-4a9d-b232-6b7380d3fdff",
       "name": "When clicking 'Execute workflow'"
     },
     {
@@ -24,10 +24,10 @@
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        920,
-        500
+        352,
+        416
       ],
-      "id": "11398526-e0df-4b05-8921-24438c5b6c73",
+      "id": "cd872e01-b27f-437d-ba17-2f963feae2c4",
       "name": "Get repositories for an organization",
       "webhookId": "2881a227-837b-419a-b6fb-d025d36086f8",
       "credentials": {
@@ -44,19 +44,19 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1260,
-        500
+        880,
+        432
       ],
-      "id": "6e27cb43-8906-4b0d-a574-f2d4db10bb76",
+      "id": "ff4ba258-7731-42df-b21a-c796a8ddc2ca",
       "name": "Loop Over Items"
     },
     {
       "parameters": {
         "workflowId": {
           "__rl": true,
-          "value": "dQ8JvyEqvevIw6gXitcq5",
+          "value": "cKpYNOj9mdUvwvbl_9xpz",
           "mode": "list",
-          "cachedResultUrl": "/workflow/dQ8JvyEqvevIw6gXitcq5",
+          "cachedResultUrl": "/workflow/cKpYNOj9mdUvwvbl_9xpz",
           "cachedResultName": "Foxtrot_DataFlow_Child"
         },
         "workflowInputs": {
@@ -74,10 +74,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1580,
-        500
+        1200,
+        432
       ],
-      "id": "e76591b7-e661-42b8-a1d9-4ae5ee08d068",
+      "id": "6dde4546-73f3-4aa1-94d6-11b71eb1c552",
       "name": "Call 'Foxtrot_DataFlow_Child'",
       "alwaysOutputData": true,
       "retryOnFail": true
@@ -88,11 +88,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        380,
-        80
+        0,
+        0
       ],
       "typeVersion": 1,
-      "id": "e1ac880c-a1a3-4a28-88d1-0045877c6266",
+      "id": "ae3c8284-10b2-4f14-bb90-e6c51ea3bc1e",
       "name": "Sticky Note"
     },
     {
@@ -101,11 +101,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        556,
-        400
+        -48,
+        224
       ],
       "typeVersion": 1,
-      "id": "a1000001-0000-4000-8000-000000000001",
+      "id": "5b958982-99b5-4fdf-8225-1ccd7feb97b1",
       "name": "Note: Trigger"
     },
     {
@@ -114,11 +114,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        840,
-        400
+        288,
+        224
       ],
       "typeVersion": 1,
-      "id": "a1000002-0000-4000-8000-000000000002",
+      "id": "2bc1d7f4-b151-484e-8836-aea3123ba8fe",
       "name": "Note: Fetch Repos"
     },
     {
@@ -127,11 +127,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1160,
-        380
+        784,
+        304
       ],
       "typeVersion": 1,
-      "id": "a1000003-0000-4000-8000-000000000003",
+      "id": "bb94fd02-8f46-47ea-a505-1d57f7b5a6bd",
       "name": "Note: Loop"
     },
     {
@@ -140,24 +140,26 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1500,
-        360
+        1120,
+        288
       ],
       "typeVersion": 1,
-      "id": "a1000004-0000-4000-8000-000000000004",
+      "id": "ccb93235-cbe7-4ef7-8dd0-47285dc81d23",
       "name": "Note: Call Child"
     },
     {
       "parameters": {
-        "content": "### ⚠️ First-Time Setup Instructions\n\n1. **Import** the `Foxtrot_DataFlow_Child` workflow first\n2. Copy the Child's **Workflow ID** from its URL bar\n3. Open the \"Call Foxtrot_DataFlow_Child\" node → paste the Workflow ID\n4. Configure your **GitHub API credentials** (token needs `repo` scope)\n5. Configure **Pinecone** and **HuggingFace** credentials in the child workflow\n6. Click **Execute Workflow** to run the full pipeline"
+        "content": "### ⚠️ First-Time Setup Instructions\n\n1. **Import** the `Foxtrot_DataFlow_Child` workflow first\n2. Copy the Child's **Workflow ID** from its URL bar\n3. Open the \"Call Foxtrot_DataFlow_Child\" node → paste the Workflow ID\n4. Configure your **GitHub API credentials** (token needs `repo` scope)\n5. Configure **Pinecone** and **HuggingFace** credentials in the child workflow\n6. Click **Execute Workflow** to run the full pipeline",
+        "height": 304,
+        "width": 352
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        380,
-        700
+        0,
+        624
       ],
       "typeVersion": 1,
-      "id": "a1000005-0000-4000-8000-000000000005",
+      "id": "d4049a32-926b-4dc1-b415-1abc33bb1197",
       "name": "Note: Setup"
     },
     {
@@ -166,12 +168,45 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1060,
-        700
+        688,
+        624
       ],
       "typeVersion": 1,
-      "id": "a1000006-0000-4000-8000-000000000006",
+      "id": "4ad42c06-942d-4781-a8c5-11c6f9a511cf",
       "name": "Note: Architecture"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3c0cb4e3-bd23-4386-9010-a4460483cd72",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "MP-Python-Scripts",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        416
+      ],
+      "id": "af66b384-1191-4d5c-a9ad-030a05071f43",
+      "name": "Filter"
     }
   ],
   "pinData": {},
@@ -191,7 +226,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Filter",
             "type": "main",
             "index": 0
           }
@@ -220,6 +255,17 @@
           }
         ]
       ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -227,10 +273,10 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "f0a54d53-cb83-4126-b612-b4f8b6bfe1af",
+  "versionId": "0401a606-567c-469f-a6b4-b6fcf7677bfc",
   "meta": {
     "instanceId": "84477c8594e4e5fa1a85df07d16feed30068678c5643e6e958310722165b467f"
   },
-  "id": "5vc2Cj4jfEFlW0Xipkacj",
+  "id": "UOGHrWIJhm1hlRm33fGtH",
   "tags": []
 }

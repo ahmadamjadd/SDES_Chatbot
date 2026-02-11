@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        400,
-        420
+        240,
+        384
       ],
-      "id": "2b8fb82f-c670-4b43-aebd-73b8011ccec6",
+      "id": "971e6cf1-8b4d-4f94-8ffd-fb93810456b2",
       "name": "Execute Workflow Trigger"
     },
     {
@@ -33,18 +33,20 @@
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        720,
-        420
+        560,
+        384
       ],
-      "id": "ac01160a-1416-418c-979f-242be8c458a7",
+      "id": "6a9ecaf9-aa67-4c3e-9a82-f2e7289a3453",
       "name": "List Repo Contents",
       "webhookId": "50dcc9a1-5695-46fa-98a2-ea1e311c8bc1",
+      "retryOnFail": true,
       "credentials": {
         "githubApi": {
           "id": "5hlVXiIYuzDQjW7T",
           "name": "GitHub account"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -101,10 +103,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1040,
-        420
+        880,
+        384
       ],
-      "id": "d9af3b85-2b8f-4c15-8197-5a6c501523ff",
+      "id": "0b60a8ea-d349-475a-bff7-ceadd0059755",
       "name": "Route by Type"
     },
     {
@@ -134,10 +136,10 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.3,
       "position": [
-        1040,
-        700
+        880,
+        672
       ],
-      "id": "58211ee7-b905-45b4-bb9b-3534f3d3f4d7",
+      "id": "affd4c85-c9ca-4568-bd83-725f98c84310",
       "name": "Dir Exclusion Filter"
     },
     {
@@ -169,10 +171,10 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.3,
       "position": [
-        1360,
-        420
+        1200,
+        384
       ],
-      "id": "5bbe034c-36f5-4f5a-9ab9-6ab4108ad819",
+      "id": "99ae60e2-a448-4188-93bf-429d46683597",
       "name": "File Type Filter"
     },
     {
@@ -195,10 +197,10 @@
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        1680,
-        420
+        1520,
+        384
       ],
-      "id": "7d8d2ca9-b047-496e-9677-932a76c22ad9",
+      "id": "1c0a6798-5a97-4e6b-8c6e-86a950fde76c",
       "name": "Fetch File Content",
       "webhookId": "f3f94e97-5811-406a-b336-935c545a50c0",
       "retryOnFail": true,
@@ -226,10 +228,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        2000,
-        420
+        1840,
+        384
       ],
-      "id": "2732c7cb-98db-4d08-aea2-1131ddb59bac",
+      "id": "72bd0b2a-8d80-4f73-95ed-c91709f42512",
       "name": "Pinecone Vector Store",
       "notesInFlow": false,
       "credentials": {
@@ -246,10 +248,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        2000,
-        660
+        1840,
+        624
       ],
-      "id": "787bd291-64eb-4379-a01e-f605358098ff",
+      "id": "0948f5cc-3dc1-4bdd-a913-0fe242ea609a",
       "name": "Embeddings HuggingFace Inference",
       "credentials": {
         "huggingFaceApi": {
@@ -262,15 +264,40 @@
       "parameters": {
         "dataType": "binary",
         "loader": "textLoader",
-        "options": {}
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "repo",
+                "value": "={{ $('Execute Workflow Trigger').item.json.name }}"
+              },
+              {
+                "name": "filePath",
+                "value": "={{ $('File Type Filter').item.json.path }}"
+              },
+              {
+                "name": "fileName",
+                "value": "={{ $('File Type Filter').item.json.name }}"
+              },
+              {
+                "name": "fileExtension",
+                "value": "={{ $('File Type Filter').item.json.name.split('.').pop() }}"
+              },
+              {
+                "name": "source",
+                "value": "=https://github.com/Team-Foxtrot-GIKI/{{ $('Execute Workflow Trigger').item.json.name }}/blob/main/{{ $('File Type Filter').item.json.path }}"
+              }
+            ]
+          }
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        2180,
-        660
+        2032,
+        624
       ],
-      "id": "287118ac-da59-457c-8252-505c8ee0ac9c",
+      "id": "de0798e7-a61e-408e-899e-4c5a7410c1a5",
       "name": "Document Loader",
       "notesInFlow": true,
       "onError": "continueRegularOutput"
@@ -281,11 +308,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        160,
-        40
+        0,
+        0
       ],
       "typeVersion": 1,
-      "id": "7b847d12-c335-4bbc-aecc-0c43a917690b",
+      "id": "930f9f47-f07f-406f-bc11-6dbb8d467e64",
       "name": "Sticky Note"
     },
     {
@@ -294,11 +321,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        336,
-        320
+        176,
+        288
       ],
       "typeVersion": 1,
-      "id": "b1000001-0000-4000-8000-000000000001",
+      "id": "82aa8bab-064a-45a8-b166-b6b9fe158c01",
       "name": "Note: Entry Point"
     },
     {
@@ -307,11 +334,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        640,
-        280
+        480,
+        240
       ],
       "typeVersion": 1,
-      "id": "b1000002-0000-4000-8000-000000000002",
+      "id": "efc8c5ca-c4e8-4ed0-ba0a-f37408a45723",
       "name": "Note: List Contents"
     },
     {
@@ -320,11 +347,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        940,
-        280
+        784,
+        240
       ],
       "typeVersion": 1,
-      "id": "b1000003-0000-4000-8000-000000000003",
+      "id": "baef14a3-39c5-45a4-a723-c847b0faaddb",
       "name": "Note: Route"
     },
     {
@@ -333,11 +360,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1280,
-        270
+        1120,
+        240
       ],
       "typeVersion": 1,
-      "id": "b1000004-0000-4000-8000-000000000004",
+      "id": "28c6872d-c16b-4c4d-9518-75b790167bf4",
       "name": "Note: File Filter"
     },
     {
@@ -346,11 +373,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1600,
-        300
+        1440,
+        272
       ],
       "typeVersion": 1,
-      "id": "b1000005-0000-4000-8000-000000000005",
+      "id": "56f716e9-093f-44a2-8180-03e16c92d4bd",
       "name": "Note: Fetch"
     },
     {
@@ -359,11 +386,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1900,
-        270
+        1744,
+        240
       ],
       "typeVersion": 1,
-      "id": "b1000006-0000-4000-8000-000000000006",
+      "id": "e6dabc5d-9370-4158-8210-67505389b648",
       "name": "Note: Embed & Store"
     },
     {
@@ -372,11 +399,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        820,
-        590
+        672,
+        560
       ],
       "typeVersion": 1,
-      "id": "b1000007-0000-4000-8000-000000000007",
+      "id": "2de2b3c8-7ce2-4523-8a25-39b326c994e7",
       "name": "Note: Dir Recursion"
     },
     {
@@ -385,11 +412,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1920,
-        580
+        1760,
+        544
       ],
       "typeVersion": 1,
-      "id": "b1000008-0000-4000-8000-000000000008",
+      "id": "f6465802-47f1-4dfa-8c8c-4ca5591bf668",
       "name": "Note: AI Components"
     },
     {
@@ -398,12 +425,25 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1360,
-        610
+        1200,
+        576
       ],
       "typeVersion": 1,
-      "id": "b1000009-0000-4000-8000-000000000009",
+      "id": "48c10297-2190-41c8-b972-35e6b87eaeec",
       "name": "Note: File Types"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  if (item.binary) {\n    for (const key of Object.keys(item.binary)) {\n      item.binary[key].mimeType = 'text/plain';\n    }\n  }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        704
+      ],
+      "id": "d618aa79-ce26-4e1f-80d1-7e55f19e841f",
+      "name": "Code in JavaScript"
     }
   ],
   "pinData": {},
@@ -441,7 +481,7 @@
       "main": [
         [
           {
-            "node": "Pinecone Vector Store",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -502,6 +542,17 @@
           }
         ]
       ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -509,10 +560,10 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "e8e06973-1691-4d45-ae9f-c316f818b060",
+  "versionId": "1ff06909-3854-4fc6-ade7-c77337438fa3",
   "meta": {
     "instanceId": "84477c8594e4e5fa1a85df07d16feed30068678c5643e6e958310722165b467f"
   },
-  "id": "dQ8JvyEqvevIw6gXitcq5",
+  "id": "cKpYNOj9mdUvwvbl_9xpz",
   "tags": []
 }
