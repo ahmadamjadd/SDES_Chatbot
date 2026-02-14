@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/status-under%20construction-orange?style=for-the-badge" alt="Under Construction" />
+  <img src="https://img.shields.io/badge/status-production-green?style=for-the-badge" alt="Production" />
 </p>
 
 <h1 align="center">🦊 FoxBrain AI</h1>
@@ -11,11 +11,7 @@
   <img src="https://img.shields.io/badge/Google%20Gemini-LLM-4285F4?style=flat-square&logo=google&logoColor=white" />
   <img src="https://img.shields.io/badge/HuggingFace-Embeddings-FFD21E?style=flat-square&logo=huggingface&logoColor=black" />
   <img src="https://img.shields.io/badge/React-Frontend-61DAFB?style=flat-square&logo=react&logoColor=black" />
-  <img src="https://img.shields.io/badge/AWS-Cloud-FF9900?style=flat-square&logo=amazonaws&logoColor=white" />
-</p>
-
-<p align="center">
-  <b>🚧 This project is actively under construction. Features and documentation may change frequently. 🚧</b>
+  <img src="https://img.shields.io/badge/Oracle%20Cloud-Hosting-F80000?style=flat-square&logo=oracle&logoColor=white" />
 </p>
 
 ---
@@ -24,15 +20,12 @@
 
 - [The Problem](#-the-problem)
 - [The Solution](#-the-solution)
+- [Tech Stack](#-tech-stack)
 - [Architecture Overview](#-architecture-overview)
 - [Project Structure](#-project-structure)
 - [Data Ingestion Pipeline](#-data-ingestion-pipeline)
   - [Parent Workflow](#parent-workflow--foxtrot_dataflow_parent)
   - [Child Workflow](#child-workflow--foxtrot_dataflow_child)
-- [RAG Agent](#-rag-agent)
-- [Tech Stack](#-tech-stack)
-- [Setup & Installation](#-setup--installation)
-- [Roadmap & Next Steps](#-roadmap--next-steps)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -96,17 +89,12 @@ FoxBrain will:
 │                                                 │                   │
 │                                                 ▼                   │
 │   ┌──────────┐    ┌──────────┐    ┌──────────────────────────┐     │
-│   │  React   │───▶│  RAG     │───▶│  Google Gemini LLM       │     │
+│   │  React   │───▶│  RAG     │───▶│  AWS Bedrock              │     │
 │   │  Frontend│    │  Agent   │    │  + Vector Store Retrieval │     │
 │   └──────────┘    └──────────┘    └──────────────────────────┘     │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
-
-The system is composed of **two main pillars**:
-
-1. **Data Ingestion Pipeline** — Crawls all GitHub repositories, extracts relevant files, and embeds them into Pinecone
-2. **RAG Agent** — Accepts user questions, retrieves relevant context from Pinecone, and generates answers using Google Gemini
 
 ---
 
@@ -115,234 +103,207 @@ The system is composed of **two main pillars**:
 ```
 SDES_Chatbot/
 │
-├── 📄 README.md                              # You are here
+├── 📄 README.md                              # Documentation
 ├── 📄 LICENSE                                 # Project license
 ├── 🤖 RAGAgent.json                          # n8n RAG Agent workflow
+├── Backend/
+│   ├── RAGAgent.json                         # RAG Agent configuration
+│   └── Dataflow/
+│       ├── Foxtrot_DataFlow_Parent.json      # Parent orchestrator workflow
+│       └── Foxtrot_DataFlow_Child.json       # Per-repo processing workflow
 │
-└── 📂 Dataflow/
-    ├── 🔄 Foxtrot_DataFlow_Parent.json       # Parent orchestrator workflow
-    └── 🔄 Foxtrot_DataFlow_Child.json        # Per-repo processing workflow
+└── Frontend/
+    ├── src/                                  # React source code
+    ├── package.json                          # Frontend dependencies
+    └── [other frontend config files]         # TypeScript, Vite, Tailwind configs
 ```
-
----
-
-## 🔄 Data Ingestion Pipeline
-
-The data pipeline is built using **n8n** (workflow automation platform) and follows a **Parent-Child architecture** for processing all repositories in the `Team-Foxtrot-GIKI` GitHub organization.
-
-### Parent Workflow — `Foxtrot_DataFlow_Parent`
-
-The orchestrator that drives the entire ingestion process.
-
-```
-Manual Trigger
-      │
-      ▼
-Fetch All Repos (GitHub API)
-      │
-      ▼
-Loop Over Items (batch size = 1)
-      │
-      ▼
-Call Child Workflow (per repo)
-      │
-      ▼
-   (repeat)
-```
-
-| Property | Value |
-|---|---|
-| **Organization** | `Team-Foxtrot-GIKI` |
-| **Processing Mode** | Sequential (one repo at a time) |
-| **Child Workflow** | `Foxtrot_DataFlow_Child` |
-| **Error Handling** | `retryOnFail` enabled, `alwaysOutputData` for empty repos |
-| **Est. Runtime** | ~5–10 min per repo |
-
-### Child Workflow — `Foxtrot_DataFlow_Child`
-
-Processes a **single repository** end-to-end: from file discovery to vector embedding.
-
-```
-Receive Repo from Parent
-        │
-        ▼
-List Repo Contents (GitHub API)
-        │
-        ▼
-  Route by Type ─────────────────┐
-  │ (dir)                        │ (file)
-  ▼                              ▼
-Dir Exclusion Filter      File Type Filter
-  │                              │
-  ▼                              ▼
- (loop back to             Fetch File Content
-  List Repo Contents)            │
-                                 ▼
-                        Embed into Pinecone
-```
-
-#### Directory Exclusion Filter
-
-The following directories are **automatically skipped** to avoid noise:
-
-```
-.git  ·  .venv  ·  __pycache__  ·  site-packages  ·  node_modules
-dist-info  ·  PackageCache  ·  Artifacts  ·  Logs  ·  UserSettings
-assets  ·  Plugins  ·  Library  ·  mavlink  ·  .github
-```
-
-#### Supported File Types
-
-| Extension | Type |
-|---|---|
-| `.py` | Python source code |
-| `.md` | Markdown documentation |
-| `.lua` | Lua scripts (drone autopilot) |
-| `.txt` | Plain text files |
-| `.yaml` / `.yml` | Configuration files |
-| `.ipynb` | Jupyter Notebooks |
-| `.waypoints` | Drone waypoint files |
-
-All other file types (images, binaries, `.docx`, `.json`, etc.) are discarded.
-
-#### Vector Storage
-
-| Property | Value |
-|---|---|
-| **Vector Database** | Pinecone |
-| **Index Name** | `foxtrot` |
-| **Namespace Strategy** | One namespace per repository |
-| **Embedding Model** | HuggingFace Inference API |
-| **Document Loader** | Binary text loader (raw file content) |
-
----
-
-## 🤖 RAG Agent
-
-The RAG (Retrieval-Augmented Generation) Agent is the **conversational interface** that freshers interact with. It is built as an n8n AI Agent workflow.
-
-### How It Works
-
-```
-User sends a message
-        │
-        ▼
-  Chat Trigger (webhook)
-        │
-        ▼
-    AI Agent ◄──── Google Gemini Chat Model (LLM)
-        │     ◄──── Simple Memory (conversation buffer)
-        │     ◄──── Vector Store Tool (Pinecone retrieval)
-        │
-        ▼
-  Generated Response
-```
-
-### Components
-
-| Component | Technology | Purpose |
-|---|---|---|
-| **LLM** | Google Gemini | Generates natural language answers from retrieved context |
-| **Memory** | Buffer Window Memory | Maintains conversation history for contextual follow-ups |
-| **Retrieval Tool** | Pinecone Vector Store | Searches embedded codebase for relevant snippets |
-| **Embedding Model** | Google Gemini Embeddings | Converts queries into vectors for similarity search |
-| **Secondary LLM** | Google Gemini (for Vector Store) | Powers the vector store question-answering tool |
-
-### Vector Store Tool Description
-
-The agent's retrieval tool is configured with the following instruction:
-
-> *"Use this tool to search the Team Foxtrot repository. It contains Python source code, Jupyter Notebooks (.ipynb), and project documentation. Use it to answer technical questions about function implementations, logic flows, or the project's structure."*
-
-This ensures the agent knows **when and how** to use the vector store to ground its answers in actual code and documentation.
 
 ---
 
 ## 🛠 Tech Stack
 
-| Layer | Technology |
+### **Backend & Automation**
+
+| Technology | Purpose |
 |---|---|
-| **Workflow Automation** | [n8n](https://n8n.io/) |
-| **Large Language Model** | [Google Gemini](https://deepmind.google/technologies/gemini/) |
-| **Vector Database** | [Pinecone](https://www.pinecone.io/) |
-| **Embeddings (Pipeline)** | [HuggingFace Inference API](https://huggingface.co/inference-api) |
-| **Embeddings (Agent)** | Google Gemini Embeddings |
-| **Source Control** | [GitHub](https://github.com/Team-Foxtrot-GIKI) |
-| **Frontend** | [React](https://react.dev/) *(coming soon)* |
-| **Cloud Platform** | [AWS](https://aws.amazon.com/) *(coming soon)* |
+| **n8n** | Workflow automation platform for data ingestion pipeline and RAG agent orchestration |
+| **AWS Bedrock** | For Large Language Model for generating answers and embeddings |
+| **Pinecone** | Vector database for storing and retrieving document embeddings |
+| **HuggingFace Inference API** | Embedding generation for document chunks |
+| **GitHub API** | Source repository access for automated knowledge ingestion |
+
+### **Frontend**
+
+| Technology | Purpose |
+|---|---|
+| **React 18** | Core frontend framework |
+| **TypeScript** | Type-safe JavaScript |
+| **Vite** | Build tool and development server |
+| **TailwindCSS** | Utility-first CSS framework |
+| **shadcn/ui** | Reusable UI components library |
+| **React Hook Form** | Form state management |
+| **Radix UI** | Accessible component primitives |
+| **Sonner** | Toast notifications |
+| **TanStack Query** | Server state management |
+| **Supabase Client** | Database and authentication integration |
+
+### **Infrastructure & Hosting**
+
+| Technology | Purpose |
+|---|---|
+| **Oracle Cloud** | Cloud hosting platform for n8n workflows |
+| **GitHub** | Source code repository and version control |
+
+### **Development & Testing**
+
+| Technology | Purpose |
+|---|---|
+| **Vitest** | Unit testing framework |
+| **ESLint** | Code quality and linting |
+| **PostCSS** | CSS processing and transformation |
+| **Bun** | Fast JavaScript runtime and package manager |
 
 ---
 
-## ⚙️ Setup & Installation
+## 🔄 Data Ingestion Pipeline
 
-### Prerequisites
+The data pipeline is built using **n8n** workflows in a **Parent-Child architecture** to systematically crawl all repositories in the `Team-Foxtrot-GIKI` GitHub organization, extract relevant files, and embed them into the Pinecone vector database for retrieval by the RAG agent.
 
-- [n8n](https://n8n.io/) instance (self-hosted or cloud)
-- [Pinecone](https://www.pinecone.io/) account with an index named `foxtrot`
-- [Google Gemini API](https://ai.google.dev/) key
-- [HuggingFace](https://huggingface.co/) API key
-- GitHub Personal Access Token with `repo` scope for `Team-Foxtrot-GIKI`
+### Parent Workflow — `Foxtrot_DataFlow_Parent`
 
-### Step-by-Step Setup
+The orchestrator workflow that manages the entire ingestion process across all repositories.
 
-1. **Import the Child Workflow**
-   - Open your n8n instance
-   - Import `Dataflow/Foxtrot_DataFlow_Child.json`
-   - Copy the Workflow ID from the URL bar
+**Purpose:** Fetches all repositories from the GitHub organization and schedules them for processing.
 
-2. **Import the Parent Workflow**
-   - Import `Dataflow/Foxtrot_DataFlow_Parent.json`
-   - Open the *"Call Foxtrot_DataFlow_Child"* node → paste the Child Workflow ID
+**Flow:**
+```
+Manual/Scheduled Trigger
+         │
+         ▼
+Fetch All Repos (GitHub API)
+         │
+         ▼
+Loop Over Each Repository
+         │
+         ▼
+Call Child Workflow (per repo)
+         │
+         ▼
+   (repeat for all repos)
+```
 
-3. **Import the RAG Agent**
-   - Import `RAGAgent.json`
+**Key Features:**
+- Iterates through all repositories in `Team-Foxtrot-GIKI` organization
+- Calls the Child Workflow for each repository sequentially
+- Error handling with retry logic enabled
+- Returns summary of processed repositories
 
-4. **Configure Credentials**
-
-   | Credential | Where to Configure |
-   |---|---|
-   | GitHub API Token | Parent & Child workflows |
-   | Pinecone API Key | Child workflow & RAG Agent |
-   | Google Gemini API Key | RAG Agent |
-   | HuggingFace API Key | Child workflow |
-
-5. **Run the Data Pipeline**
-   - Open the Parent workflow → click **Execute Workflow**
-   - Wait for all repositories to be processed and embedded
-
-6. **Test the RAG Agent**
-   - Open the RAG Agent workflow → click **Chat** in the trigger node
-   - Ask a question about Team Foxtrot's projects!
+**Configuration:**
+| Property | Value |
+|---|---|
+| **Organization** | `Team-Foxtrot-GIKI` |
+| **Processing Mode** | Sequential (one repo at a time) |
+| **Child Workflow** | `Foxtrot_DataFlow_Child` |
+| **Error Handling** | Retry enabled with fallback |
+| **Est. Runtime** | ~5–10 minutes per repository |
 
 ---
 
-## 🗺 Roadmap & Next Steps
+### Child Workflow — `Foxtrot_DataFlow_Child`
 
-### 🔜 In Progress
+The worker workflow that processes a **single repository** end-to-end, from file discovery through vector embedding.
 
-- [ ] **React Frontend** — A polished web UI for the chatbot, replacing the raw n8n chat interface. Built with React for a seamless conversational experience.
+**Purpose:** Extracts supported file types from a repository and embeds them into Pinecone.
 
-### 🔮 Planned Features
+**Flow:**
+```
+Receive Repository Info
+         │
+         ▼
+List Repository Contents (GitHub API)
+         │
+         ▼
+    Branch by Type
+    │                  │
+    │ (Directories)    │ (Files)
+    ▼                  ▼
+Apply Dir Filter    Apply File Type Filter
+    │                  │
+    ▼                  ▼
+(Recurse)          Fetch File Content
+                        │
+                        ▼
+                   Embed into Pinecone
+                   (with metadata)
+```
 
-- [ ] **CI/CD Embedding Pipeline** — Automated GitHub webhook integration so that every new commit/push automatically triggers re-embedding of changed files into Pinecone. No manual pipeline runs needed.
+**Processing Steps:**
 
-- [ ] **AWS Bedrock Integration** — Migrate from Google Gemini to **AWS Bedrock** for LLM inference, enabling access to models like Claude, Titan, and Llama with enterprise-grade security and scalability.
+1. **Directory Traversal** — Recursively list all files in the repository
+2. **Directory Filtering** — Skip excluded directories to reduce noise
+3. **File Type Filtering** — Only process supported file extensions
+4. **Content Extraction** — Fetch file content from GitHub
+5. **Embedding & Storage** — Convert file content to embeddings using HuggingFace API and store in Pinecone
 
-- [ ] **AWS Lambda Functions** — Serverless compute for the embedding pipeline, eliminating the need for an always-on n8n instance.
+---
 
-- [ ] **AWS S3 Document Store** — Persistent storage for raw documents, PDFs, and meeting notes that can also be ingested into the vector store.
+### Excluded Directories
 
-- [ ] **Amazon API Gateway** — A secure, scalable API layer between the React frontend and the RAG backend.
+The following directories are **automatically skipped** to avoid processing unnecessary files:
 
-- [ ] **AWS CloudWatch Monitoring** — Observability and logging for pipeline runs, agent queries, and error tracking.
+```
+.git              # Git metadata
+.venv / env       # Virtual environments
+__pycache__       # Python cache
+site-packages     # Python packages
+node_modules      # NPM dependencies
+dist-info         # Distribution metadata
+PackageCache      # Package cache
+Artifacts         # Build artifacts
+Logs              # Log files
+UserSettings      # User-specific settings
+assets            # Asset files
+Plugins           # Plugin directories
+Library           # Library directories
+mavlink           # Drone protocol files
+.github           # GitHub configuration
+```
 
-- [ ] **Amazon Cognito Authentication** — Role-based access control so only verified Team Foxtrot members can access the chatbot.
+---
 
-- [ ] **Multi-Source Ingestion** — Expand beyond GitHub to ingest Google Drive docs, Notion pages, Confluence wikis, and Slack messages.
+### Supported File Types
 
-- [ ] **Feedback Loop** — Allow users to upvote/downvote responses to continuously improve retrieval quality.
+The pipeline processes the following file types to build the knowledge base:
 
-- [ ] **Admin Dashboard** — A management panel to monitor pipeline health, view embedding statistics, and manage the knowledge base.
+| Extension | Type | Purpose |
+|---|---|---|
+| `.py` | Python source code | Team Foxtrot's primary language for UAV autopilot and utilities |
+| `.md` | Markdown documentation | README files, guides, and inline documentation |
+| `.lua` | Lua scripts | Drone autopilot scripting language |
+| `.txt` | Plain text files | Configuration and documentation files |
+| `.yaml` / `.yml` | Configuration files | Workflow and system configurations |
+| `.ipynb` | Jupyter Notebooks | Data analysis and research notebooks |
+| `.waypoints` | Drone waypoint files | UAV mission planning files |
+
+**Excluded Types:** Images (`.png`, `.jpg`), binaries, `.docx`, compressed files, `.json` (to reduce noise), and other unsupported formats are automatically discarded.
+
+---
+
+### Vector Storage Configuration
+
+**Database:** Pinecone  
+**Index Name:** `foxtrot`  
+**Namespace Strategy:** One namespace per repository (e.g., `autopilot`, `mission-planner`)  
+**Embedding Model:** HuggingFace Inference API  
+**Document Metadata:** File name, repository, file type, and content
+
+Each embedded document includes:
+- Original file content
+- File path and repository name
+- File type and extension
+- Timestamp of ingestion
+
+This enables the RAG agent to retrieve relevant code snippets with full context.
 
 ---
 
