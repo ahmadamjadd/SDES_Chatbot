@@ -28,9 +28,9 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="border-t border-border bg-background p-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-end gap-2 bg-muted rounded-2xl px-4 py-2">
+    <div className="border-t border-border bg-background p-5">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-end gap-3 bg-muted rounded-2xl px-5 py-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -39,7 +39,7 @@ const MessageInput = () => {
             placeholder={activeConversationId ? "Message FoxBrain AI..." : "Start a new chat to begin"}
             disabled={!activeConversationId}
             rows={1}
-            className="flex-1 bg-transparent resize-none outline-none text-sm py-2 max-h-[200px] placeholder:text-muted-foreground disabled:opacity-50"
+            className="flex-1 bg-transparent resize-none outline-none text-lg py-2 max-h-[200px] placeholder:text-muted-foreground disabled:opacity-50"
           />
           <button
             onClick={handleSend}
@@ -49,7 +49,7 @@ const MessageInput = () => {
             <ArrowUp className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-xs text-muted-foreground text-center mt-2">
+        <p className="text-sm text-muted-foreground text-center mt-2">
           FoxBrain AI can make mistakes. Verify important information.
         </p>
       </div>

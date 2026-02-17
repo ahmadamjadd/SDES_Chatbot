@@ -1,8 +1,9 @@
 import { Message } from "@/types/chat";
 import ReactMarkdown from "react-markdown";
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessageProps {
   message: Message;
@@ -16,37 +17,132 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className={`flex gap-3 px-4 py-3 ${isUser ? "justify-end" : "justify-start"}`}
+      className={`flex w-full gap-4 px-1 py-4 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-lg">
+        <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xl">
           🦊
         </div>
       )}
       <div
-        className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-3 ${
+        className={`rounded-2xl px-6 py-4 ${
           isUser
-            ? "bg-user-message text-user-message-foreground rounded-br-md"
-            : "bg-ai-message text-ai-message-foreground"
+            ? "max-w-[60%] bg-user-message text-user-message-foreground rounded-br-md"
+            : "max-w-[88%] bg-ai-message text-ai-message-foreground"
         }`}
       >
         {isUser ? (
-          <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+          <p className="whitespace-pre-wrap text-lg leading-relaxed">{message.content}</p>
         ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
+          <div className="prose prose-lg dark:prose-invert max-w-none text-lg leading-relaxed">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
+                p({ children }) {
+                  return <p className="mb-4 leading-relaxed">{children}</p>;
+                },
+                h1({ children }) {
+                  return <h1 className="text-2xl font-bold mb-4 mt-6">{children}</h1>;
+                },
+                h2({ children }) {
+                  return <h2 className="text-xl font-bold mb-3 mt-5">{children}</h2>;
+                },
+                h3({ children }) {
+                  return <h3 className="text-lg font-bold mb-3 mt-4">{children}</h3>;
+                },
+                h4({ children }) {
+                  return <h4 className="font-bold mb-2 mt-3">{children}</h4>;
+                },
+                h5({ children }) {
+                  return <h5 className="font-semibold mb-2 mt-2">{children}</h5>;
+                },
+                h6({ children }) {
+                  return <h6 className="font-semibold text-sm mb-2 mt-2">{children}</h6>;
+                },
+                br() {
+                  return <br className="mb-2" />;
+                },
+                ul({ children }) {
+                  return <ul className="list-disc list-inside mb-4 space-y-2 pl-2">{children}</ul>;
+                },
+                ol({ children }) {
+                  return <ol className="list-decimal list-inside mb-4 space-y-2 pl-2">{children}</ol>;
+                },
+                li({ children }) {
+                  return <li className="ml-2">{children}</li>;
+                },
+                blockquote({ children }) {
+                  return <blockquote className="border-l-4 border-primary/50 pl-4 py-2 mb-4 italic text-muted-foreground bg-muted/30 rounded">{children}</blockquote>;
+                },
+                strong({ children }) {
+                  return <strong className="font-bold">{children}</strong>;
+                },
+                em({ children }) {
+                  return <em className="italic">{children}</em>;
+                },
+                del({ children }) {
+                  return <del className="line-through text-muted-foreground">{children}</del>;
+                },
+                a({ href, children }) {
+                  return (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      {children}
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  );
+                },
+                img({ src, alt }) {
+                  return (
+                    <img
+                      src={src}
+                      alt={alt}
+                      className="max-w-full h-auto rounded-lg my-4 border border-border"
+                    />
+                  );
+                },
+                table({ children }) {
+                  return (
+                    <div className="overflow-x-auto my-4">
+                      <table className="border-collapse border border-border text-sm">
+                        {children}
+                      </table>
+                    </div>
+                  );
+                },
+                thead({ children }) {
+                  return <thead className="bg-muted">{children}</thead>;
+                },
+                tbody({ children }) {
+                  return <tbody>{children}</tbody>;
+                },
+                tr({ children }) {
+                  return <tr className="border border-border">{children}</tr>;
+                },
+                th({ children }) {
+                  return <th className="border border-border px-3 py-2 text-left font-semibold">{children}</th>;
+                },
+                td({ children }) {
+                  return <td className="border border-border px-3 py-2">{children}</td>;
+                },
                 code({ className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || "");
                   const isInline = !match && !String(children).includes("\n");
                   if (isInline) {
                     return (
-                      <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono" {...props}>
+                      <code className="bg-muted px-2 py-1 rounded text-sm font-mono" {...props}>
                         {children}
                       </code>
                     );
                   }
                   return <CodeBlock language={match?.[1]}>{String(children).replace(/\n$/, "")}</CodeBlock>;
+                },
+                hr() {
+                  return <hr className="my-6 border-border" />;
                 },
               }}
             >
@@ -56,7 +152,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         )}
       </div>
       {isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold">
+        <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold">
           A
         </div>
       )}
@@ -74,15 +170,15 @@ function CodeBlock({ children, language }: { children: string; language?: string
   };
 
   return (
-    <div className="relative group my-3 rounded-lg overflow-hidden border border-border">
-      <div className="flex items-center justify-between bg-muted px-3 py-1.5 text-xs text-muted-foreground">
+    <div className="relative group my-4 rounded-lg overflow-hidden border border-border">
+      <div className="flex items-center justify-between bg-muted px-4 py-2 text-sm text-muted-foreground">
         <span>{language || "code"}</span>
         <button onClick={handleCopy} className="flex items-center gap-1 hover:text-foreground transition-colors">
-          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
-      <pre className="p-3 overflow-x-auto bg-muted/50 text-xs">
+      <pre className="p-4 overflow-x-auto bg-muted/50 text-sm">
         <code>{children}</code>
       </pre>
     </div>

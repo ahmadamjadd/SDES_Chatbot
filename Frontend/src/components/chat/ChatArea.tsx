@@ -28,13 +28,13 @@ const ChatArea = () => {
   return (
     <div className="flex flex-col h-full flex-1">
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background/80 backdrop-blur-sm">
+      <div className="flex items-center gap-2 px-6 py-4 border-b border-border bg-background/80 backdrop-blur-sm">
         {!sidebarOpen && (
           <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-lg hover:bg-muted transition-colors">
             <Menu className="w-5 h-5 text-muted-foreground" />
           </button>
         )}
-        <h2 className="text-sm font-medium">FoxBrain AI</h2>
+        <h2 className="text-base font-medium">FoxBrain AI</h2>
         <div className="flex-1" />
         <button
           onClick={createConversation}

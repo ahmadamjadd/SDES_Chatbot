@@ -2,7 +2,7 @@ import { Conversation, Message } from "@/types/chat";
 import { supabase } from "@/lib/supabase";
 
 // TODO: Replace with your actual n8n webhook URL once deployed
-const N8N_WEBHOOK_URL = "http://localhost:5678/webhook/test/de82c344-f0dd-466d-aa72-7fc7eed5dc2";
+const N8N_WEBHOOK_URL = "http://localhost:5678/webhook/de82c344-f9dd-466d-ae72-7fc7eedb5dc2";
 
 // Set to false once n8n is ready
 const USE_MOCK_AI = false;

@@ -29,8 +29,8 @@ const Sidebar = () => {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🦊</span>
-          <span className="font-semibold text-base">FoxBrain AI</span>
+          <span className="text-2xl">🦊</span>
+          <span className="font-semibold text-lg">FoxBrain AI</span>
         </div>
         <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg hover:bg-sidebar-accent transition-colors">
           {isMobile ? <X className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
@@ -41,7 +41,7 @@ const Sidebar = () => {
       <div className="px-3 pb-2">
         <button
           onClick={createConversation}
-          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary text-primary-foreground text-base font-medium hover:opacity-90 transition-opacity"
         >
           <MessageSquarePlus className="w-4 h-4" />
           New Chat
@@ -52,7 +52,7 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto scrollbar-thin px-2 pb-2">
         {grouped.map(([label, convs]) => (
           <div key={label} className="mb-2">
-            <p className="text-xs font-medium text-muted-foreground px-2 py-2">{label}</p>
+            <p className="text-sm font-medium text-muted-foreground px-2 py-2">{label}</p>
             {convs.map((conv) => (
               <ConversationItem
                 key={conv.id}
@@ -72,7 +72,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-2 mb-2">
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="flex items-center gap-2 flex-1 px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors text-sm"
+            className="flex items-center gap-2 flex-1 px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors text-base"
           >
             {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             {darkMode ? "Light mode" : "Dark mode"}
@@ -83,8 +83,8 @@ const Sidebar = () => {
             {user?.name?.[0] || "?"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            <p className="text-base font-medium truncate">{user?.name}</p>
+            <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
           </div>
           <button onClick={logout} className="p-1.5 rounded-lg hover:bg-sidebar-accent transition-colors" title="Logout">
             <LogOut className="w-4 h-4" />
