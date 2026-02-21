@@ -1,3 +1,5 @@
+> **Note:** Active link cannot be provided as it would violate the team's privacy and project confidentiality. 😢
+
 <h1 align="center">🦊 FoxBrain AI</h1>
 <h3 align="center"><em>RAG-Powered AI Agent & Knowledge Assistant for Team Foxtrot GIKI</em></h3>
 
