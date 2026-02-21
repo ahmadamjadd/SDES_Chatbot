@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/status-production-green?style=for-the-badge" alt="Production" />
-</p>
-
 <h1 align="center">🦊 FoxBrain AI</h1>
 <h3 align="center"><em>RAG-Powered AI Agent & Knowledge Assistant for Team Foxtrot GIKI</em></h3>
 
