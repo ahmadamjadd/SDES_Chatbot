@@ -28,7 +28,17 @@ export const authApi = {
     if (error) throw error;
   },
   forgotPassword: async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const redirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/reset-password`
+        : undefined;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
+    if (error) throw error;
+  },
+  updatePassword: async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
   },
   getSession: async () => {

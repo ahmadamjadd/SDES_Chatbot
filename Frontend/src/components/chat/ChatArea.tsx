@@ -59,7 +59,7 @@ const ChatArea = () => {
         ) : messages.length === 0 ? (
           <EmptyConversation />
         ) : (
-          <div className="max-w-3xl mx-auto py-4">
+          <div className="max-w-3xl w-full min-w-0 mx-auto py-4 px-2">
             {messages.map((msg) => (
               <ChatMessage key={msg.id} message={msg} />
             ))}

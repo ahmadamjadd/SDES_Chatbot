@@ -19,7 +19,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className={`flex w-full gap-4 px-1 py-4 ${isUser ? "justify-end" : "justify-start"}`}
+      className={`flex w-full min-w-0 gap-4 px-1 py-4 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
         <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xl">
@@ -27,16 +27,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         </div>
       )}
       <div
-        className={`rounded-2xl px-6 py-4 ${
+        className={`rounded-2xl px-6 py-4 overflow-visible break-words ${
           isUser
             ? "max-w-[60%] bg-user-message text-user-message-foreground rounded-br-md"
-            : "max-w-[88%] bg-ai-message text-ai-message-foreground"
+            : "max-w-[88%] min-w-0 bg-ai-message text-ai-message-foreground"
         }`}
       >
         {isUser ? (
           <p className="whitespace-pre-wrap text-lg leading-relaxed">{message.content}</p>
         ) : (
-          <div className="prose prose-lg dark:prose-invert max-w-none text-lg leading-relaxed prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-blockquote:text-foreground/90 prose-th:text-foreground prose-td:text-foreground prose-a:text-primary">
+          <div className="prose prose-lg dark:prose-invert max-w-none min-w-0 text-lg leading-relaxed break-words  prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-blockquote:text-foreground/90 prose-th:text-foreground prose-td:text-foreground prose-a:text-primary [&_*]:break-words">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
