@@ -11,7 +11,7 @@
         240,
         384
       ],
-      "id": "971e6cf1-8b4d-4f94-8ffd-fb93810456b2",
+      "id": "838e9c56-3862-492d-90f9-01a2ea10ea11",
       "name": "Execute Workflow Trigger"
     },
     {
@@ -36,7 +36,7 @@
         560,
         384
       ],
-      "id": "6a9ecaf9-aa67-4c3e-9a82-f2e7289a3453",
+      "id": "49577056-07c0-425c-97a9-dd05f35ff37f",
       "name": "List Repo Contents",
       "webhookId": "50dcc9a1-5695-46fa-98a2-ea1e311c8bc1",
       "retryOnFail": true,
@@ -106,7 +106,7 @@
         880,
         384
       ],
-      "id": "0b60a8ea-d349-475a-bff7-ceadd0059755",
+      "id": "99a0f8c2-efe5-4808-b7f1-f54c2f587cd4",
       "name": "Route by Type"
     },
     {
@@ -139,7 +139,7 @@
         880,
         672
       ],
-      "id": "affd4c85-c9ca-4568-bd83-725f98c84310",
+      "id": "fe20838b-bc0f-45c4-8d79-d1aa5d54b367",
       "name": "Dir Exclusion Filter"
     },
     {
@@ -174,7 +174,7 @@
         1200,
         384
       ],
-      "id": "99ae60e2-a448-4188-93bf-429d46683597",
+      "id": "0160078d-4afb-48f6-bba5-9734817d4dfe",
       "name": "File Type Filter"
     },
     {
@@ -200,7 +200,7 @@
         1520,
         384
       ],
-      "id": "1c0a6798-5a97-4e6b-8c6e-86a950fde76c",
+      "id": "c2217e90-4ccc-4942-958a-e71fec38e42a",
       "name": "Fetch File Content",
       "webhookId": "f3f94e97-5811-406a-b336-935c545a50c0",
       "retryOnFail": true,
@@ -220,10 +220,7 @@
           "mode": "list",
           "cachedResultName": "foxtrot"
         },
-        "options": {
-          "clearNamespace": false,
-          "pineconeNamespace": "={{ $('Execute Workflow Trigger').item.json.name }}"
-        }
+        "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
@@ -231,7 +228,7 @@
         1840,
         384
       ],
-      "id": "72bd0b2a-8d80-4f73-95ed-c91709f42512",
+      "id": "080331a2-c901-4b55-8094-3e505915dc1b",
       "name": "Pinecone Vector Store",
       "notesInFlow": false,
       "credentials": {
@@ -243,6 +240,7 @@
     },
     {
       "parameters": {
+        "modelName": "sentence-transformers/all-MiniLM-L6-v2",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
@@ -251,7 +249,7 @@
         1840,
         624
       ],
-      "id": "0948f5cc-3dc1-4bdd-a913-0fe242ea609a",
+      "id": "771a8f98-3a8e-49c1-b1f7-99185e611d5d",
       "name": "Embeddings HuggingFace Inference",
       "credentials": {
         "huggingFaceApi": {
@@ -297,139 +295,159 @@
         2032,
         624
       ],
-      "id": "de0798e7-a61e-408e-899e-4c5a7410c1a5",
+      "id": "510c172f-a84e-4cc2-8253-93560a7dfec4",
       "name": "Document Loader",
       "notesInFlow": true,
       "onError": "continueRegularOutput"
     },
     {
       "parameters": {
-        "content": "# 📂 Foxtrot DataFlow — Child Workflow (Per-Repo Processor)\n\nProcesses a **single repository** received from the Parent workflow.\n\n### Pipeline\n1. **Receives** repo name from parent\n2. **Lists** all files/dirs at current path (starts at root `/`)\n3. **Routes** items: directories ↓ recurse · files → filter & embed\n4. **Filters out** junk directories (`.git`, `.venv`, `node_modules`…)\n5. **Filters files** by extension (`.py`, `.md`, `.lua`, `.txt`…)\n6. **Fetches** file content from GitHub\n7. **Embeds** content into Pinecone under the repo's namespace\n\n---\n\n| Property | Value |\n|---|---|\n| **Vector DB** | Pinecone (index: `foxtrot`) |\n| **Namespace** | Repository name (one per repo) |\n| **Embeddings** | HuggingFace Inference API |\n| **Terminal Node** | Pinecone — no loop back to parent |"
+        "content": "# 1. Setup\nReceives repo from Parent. Config: GitHub, Pinecone, HuggingFace.",
+        "height": 116,
+        "width": 380
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         0,
         0
       ],
-      "typeVersion": 1,
-      "id": "930f9f47-f07f-406f-bc11-6dbb8d467e64",
+      "id": "c1b4eef4-d674-4531-8b54-487709d1cac4",
       "name": "Sticky Note"
     },
     {
       "parameters": {
-        "content": "### ⚡ Entry Point\n\nReceives a **single repo object**\nfrom the parent workflow via\n`passthrough` mode.\n\nKey field: `json.name`\n(the repository name)"
+        "content": "## Entry\nReceives repo object. Key: json.name",
+        "height": 112,
+        "width": 244
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        176,
-        288
-      ],
       "typeVersion": 1,
-      "id": "82aa8bab-064a-45a8-b166-b6b9fe158c01",
+      "position": [
+        160,
+        272
+      ],
+      "id": "18afe124-1626-4285-b6d7-32b717a397a7",
       "name": "Note: Entry Point"
     },
     {
       "parameters": {
-        "content": "### 📂 List Contents\n\nGitHub API: list files at\nthe current `path`.\n\nFirst call uses `/` (root).\nRecursive calls use the\ndirectory's `path` field.\n\nReturns both **files** and\n**directories** as items."
+        "content": "## List\nGitHub API lists files at path. Root: /. Recurses dirs.",
+        "height": 112,
+        "width": 232
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         480,
-        240
+        224
       ],
-      "typeVersion": 1,
-      "id": "efc8c5ca-c4e8-4ed0-ba0a-f37408a45723",
+      "id": "cea98863-c81c-4d6e-891a-4dea22459e2e",
       "name": "Note: List Contents"
     },
     {
       "parameters": {
-        "content": "### 🔀 Route by Type\n\nSplits items into two paths:\n\n**Output 0** → `type == \"dir\"`\nGoes ↓ to Dir Exclusion Filter\nthen loops back to List Contents\n\n**Output 1** → `type == \"file\"`\nGoes → to File Type Filter\nthen proceeds to fetch & embed"
+        "content": "## Route\ndir → Filter → loop back. file → embed path.",
+        "height": 112,
+        "width": 252
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         784,
-        240
+        224
       ],
-      "typeVersion": 1,
-      "id": "baef14a3-39c5-45a4-a723-c847b0faaddb",
+      "id": "86374091-dd69-4ea1-bf8e-1542bc88fc54",
       "name": "Note: Route"
     },
     {
       "parameters": {
-        "content": "### 🔍 File Extension Filter\n\nKeeps only files matching:\n`.py` `.md` `.lua` `.txt`\n`.yaml` `.yml` `.ipynb`\n`.waypoints`\n\nAlso excludes paths containing\njunk folders via negative\nlookahead in the regex.\n\n_Discards `.docx`, `.json`,\nimages, binaries, etc._"
+        "content": "## File Filter\n.py .md .lua .txt .yaml .ipynb .waypoints",
+        "height": 112,
+        "width": 232
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         1120,
-        240
+        224
       ],
-      "typeVersion": 1,
-      "id": "28c6872d-c16b-4c4d-9518-75b790167bf4",
+      "id": "ff7deba4-e71b-43ca-a713-c147f263e806",
       "name": "Note: File Filter"
     },
     {
       "parameters": {
-        "content": "### 📥 Fetch Content\n\nGitHub API: downloads the\nraw file content for each\nfile that passed the filter.\n\n✅ `retryOnFail` enabled\nfor transient API errors."
+        "content": "## Fetch\nGitHub API gets raw file content.",
+        "height": 112,
+        "width": 228
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         1440,
-        272
+        256
       ],
-      "typeVersion": 1,
-      "id": "56f716e9-093f-44a2-8180-03e16c92d4bd",
+      "id": "c020671d-9f94-4e9d-a906-c610b62836b0",
       "name": "Note: Fetch"
     },
     {
       "parameters": {
-        "content": "### 🧠 Embed & Store\n\nInserts file content into\n**Pinecone** vector database.\n\n**Index:** `foxtrot`\n**Namespace:** repo name\n(each repo gets its own\nisolated namespace)\n\nThis is the **terminal node** —\nonce embedded, the workflow\nends for this repo."
+        "content": "## Embed\nPinecone insert. Namespace = repo name.",
+        "height": 112,
+        "width": 248
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         1744,
-        240
+        224
       ],
-      "typeVersion": 1,
-      "id": "e6dabc5d-9370-4158-8210-67505389b648",
+      "id": "cc52a2c8-1144-4409-adbd-d4f819fa0266",
       "name": "Note: Embed & Store"
     },
     {
       "parameters": {
-        "content": "### 🔄 Directory Recursion Loop\n\nDirectories from the Switch come here ↓\n\n**Blocks junk directories:**\n`.git` · `.venv` · `__pycache__`\n`node_modules` · `site-packages`\n`dist-info` · `PackageCache`\n`Artifacts` · `Logs` · `UserSettings`\n`assets` · `Plugins` · `Library`\n`mavlink` · `.github`\n\nSurvivors loop **back up** to\n\"List Repo Contents\" → recursive\ndirectory traversal! 🔁"
+        "content": "## Dir Filter\nBlocks .git .venv node_modules etc. Survivors → List (recurse).",
+        "height": 112,
+        "width": 272
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         672,
-        560
+        544
       ],
-      "typeVersion": 1,
-      "id": "2de2b3c8-7ce2-4523-8a25-39b326c994e7",
+      "id": "0cd0a791-f043-44a7-ace5-ddf54e11009e",
       "name": "Note: Dir Recursion"
     },
     {
       "parameters": {
-        "content": "### 🤖 AI Components\n\n**Embeddings:** HuggingFace\nInference API (default model)\n\n**Document Loader:** Binary text\nloader — reads raw file content\nfrom the GitHub API response.\n\n_Both feed into Pinecone\nVector Store as sub-nodes._"
+        "content": "## AI\nHuggingFace embeddings. Doc loader → Pinecone.",
+        "height": 112,
+        "width": 236
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1760,
-        544
-      ],
       "typeVersion": 1,
-      "id": "f6465802-47f1-4dfa-8c8c-4ca5591bf668",
+      "position": [
+        1792,
+        768
+      ],
+      "id": "15c4f642-7858-402a-82ae-b9843239c49c",
       "name": "Note: AI Components"
     },
     {
       "parameters": {
-        "content": "### 📋 Supported File Types\n\n| Extension | Type |\n|---|---|\n| `.py` | Python source |\n| `.md` | Markdown docs |\n| `.lua` | Lua scripts |\n| `.txt` | Plain text |\n| `.yaml` `.yml` | Config files |\n| `.ipynb` | Jupyter notebooks |\n| `.waypoints` | Drone waypoints |\n\n_All other extensions are\ndiscarded (images, binaries,\n.docx, .json, etc.)_"
+        "content": "## Supported Types\n.py .md .md .lua .txt .yaml .ipynb .waypoints",
+        "height": 96,
+        "width": 268
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
         1200,
-        576
+        560
       ],
-      "typeVersion": 1,
-      "id": "48c10297-2190-41c8-b972-35e6b87eaeec",
+      "id": "6778c73f-cbe9-4008-bee3-be3354615412",
       "name": "Note: File Types"
     },
     {
@@ -442,7 +460,7 @@
         1648,
         704
       ],
-      "id": "d618aa79-ce26-4e1f-80d1-7e55f19e841f",
+      "id": "9f8700ae-0834-4a1e-a356-426c0d30179c",
       "name": "Code in JavaScript"
     }
   ],
@@ -560,10 +578,10 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "1ff06909-3854-4fc6-ade7-c77337438fa3",
+  "versionId": "29fe0474-fb6b-4573-9174-7f71c16e52a3",
   "meta": {
     "instanceId": "84477c8594e4e5fa1a85df07d16feed30068678c5643e6e958310722165b467f"
   },
-  "id": "cKpYNOj9mdUvwvbl_9xpz",
+  "id": "Vm61LRn7RSNHhNneapmX2",
   "tags": []
 }

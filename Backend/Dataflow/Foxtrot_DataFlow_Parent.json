@@ -6,10 +6,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        32,
-        416
+        -80,
+        400
       ],
-      "id": "8a983112-d58a-4a9d-b232-6b7380d3fdff",
+      "id": "d9109632-6965-45ad-b95a-9def22f21437",
       "name": "When clicking 'Execute workflow'"
     },
     {
@@ -24,10 +24,10 @@
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        352,
-        416
+        240,
+        400
       ],
-      "id": "cd872e01-b27f-437d-ba17-2f963feae2c4",
+      "id": "2f953e94-7137-4cf6-a820-a91b6615bd54",
       "name": "Get repositories for an organization",
       "webhookId": "2881a227-837b-419a-b6fb-d025d36086f8",
       "credentials": {
@@ -44,10 +44,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        880,
-        432
+        768,
+        416
       ],
-      "id": "ff4ba258-7731-42df-b21a-c796a8ddc2ca",
+      "id": "ee10a6b4-baa0-4ed2-819b-8c5b17b1a970",
       "name": "Loop Over Items"
     },
     {
@@ -74,139 +74,118 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1200,
-        432
+        1088,
+        416
       ],
-      "id": "6dde4546-73f3-4aa1-94d6-11b71eb1c552",
+      "id": "74ea9fec-ee5b-47cc-811b-8fbf0597dac6",
       "name": "Call 'Foxtrot_DataFlow_Child'",
       "alwaysOutputData": true,
       "retryOnFail": true
     },
     {
       "parameters": {
-        "content": "# 🚀 Foxtrot DataFlow — Parent Orchestrator\n\nOrchestrates the **entire data ingestion pipeline** for the `Team-Foxtrot-GIKI` GitHub organization.\n\n### How It Works\n1. Fetches **all repositories** from the GitHub org\n2. Loops through each repo **one at a time** (batch size = 1)\n3. Calls the **Child Workflow** to process each repo\n4. Waits for the child to finish before moving to the next repo\n\n---\n\n| Property | Value |\n|---|---|\n| **Organization** | `Team-Foxtrot-GIKI` |\n| **Processing** | Sequential (one repo at a time) |\n| **Child Workflow** | `Foxtrot_DataFlow_Child` |\n| **Est. Runtime** | ~5–10 min per repo |"
+        "content": "## 1. Setup\nImport Child workflow first. Paste Child's Workflow ID into \"Call Child\" node. Configure GitHub, Pinecone, HuggingFace in Child.",
+        "height": 136,
+        "width": 488
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        0,
-        0
-      ],
       "typeVersion": 1,
-      "id": "ae3c8284-10b2-4f14-bb90-e6c51ea3bc1e",
+      "position": [
+        -112,
+        -16
+      ],
+      "id": "63c3ef4f-84b2-44c5-84b8-0d267bfcd459",
       "name": "Sticky Note"
     },
     {
       "parameters": {
-        "content": "### 🟢 Step 1 · Trigger\n\nClick **Execute Workflow**\nto start the entire pipeline.\n\n_Manual trigger only —\nno schedule configured._"
+        "content": "### Step 1 · Trigger\nExecute workflow manually.",
+        "height": 96,
+        "width": 308
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -48,
-        224
-      ],
       "typeVersion": 1,
-      "id": "5b958982-99b5-4fdf-8225-1ccd7feb97b1",
+      "position": [
+        -224,
+        272
+      ],
+      "id": "6544e090-8867-42ac-a3f2-decbf4c8f2f4",
       "name": "Note: Trigger"
     },
     {
       "parameters": {
-        "content": "### 🐙 Step 2 · Fetch All Repos\n\nGitHub API call to list **every\nrepository** in the organization.\n\nReturns ~15 repos with full\nmetadata (name, id, visibility…)"
+        "content": "### Step 2 · Fetch Repos\nGitHub API lists all repos in Team-Foxtrot-GIKI org.",
+        "height": 112,
+        "width": 360
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        288,
-        224
-      ],
       "typeVersion": 1,
-      "id": "2bc1d7f4-b151-484e-8836-aea3123ba8fe",
+      "position": [
+        176,
+        272
+      ],
+      "id": "0553a8fa-77c0-46a1-b607-c06c0f1eb923",
       "name": "Note: Fetch Repos"
     },
     {
       "parameters": {
-        "content": "### 🔁 Step 3 · Batch Loop\n\nIterates over repos **one by one**\n(batch size = 1).\n\n`done` output → all repos done ✅\n`loop` output → process next repo 🔄\n\n_Sequential ensures we don't\noverwhelm the GitHub API._"
+        "content": "### Step 3 · Loop\nIterates repos one-by-one. Batch size = 1.",
+        "height": 112,
+        "width": 268
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
-        784,
+        672,
         304
       ],
-      "typeVersion": 1,
-      "id": "bb94fd02-8f46-47ea-a505-1d57f7b5a6bd",
+      "id": "de86a810-bac0-498a-8476-b8132c5a2302",
       "name": "Note: Loop"
     },
     {
       "parameters": {
-        "content": "### 📤 Step 4 · Call Child Workflow\n\nSends the current repo object\nto `Foxtrot_DataFlow_Child`.\n\nThe child handles:\n→ Recursive file listing\n→ Filtering junk directories\n→ Filtering by file extension\n→ Fetching file contents\n→ Embedding into Pinecone\n\n✅ **alwaysOutputData** = true\n_(empty repos won't break the loop)_\n\n✅ **retryOnFail** = true\n_(transient errors auto-retry)_"
+        "content": "### Step 4 · Call Child\nSends repo to Child. Child embeds into Pinecone. Retry on fail.",
+        "height": 116,
+        "width": 368
       },
       "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
-        1120,
+        1008,
         288
       ],
-      "typeVersion": 1,
-      "id": "ccb93235-cbe7-4ef7-8dd0-47285dc81d23",
+      "id": "e4f6f7c2-34ff-4a6f-adf4-e05e4f85b613",
       "name": "Note: Call Child"
     },
     {
       "parameters": {
-        "content": "### ⚠️ First-Time Setup Instructions\n\n1. **Import** the `Foxtrot_DataFlow_Child` workflow first\n2. Copy the Child's **Workflow ID** from its URL bar\n3. Open the \"Call Foxtrot_DataFlow_Child\" node → paste the Workflow ID\n4. Configure your **GitHub API credentials** (token needs `repo` scope)\n5. Configure **Pinecone** and **HuggingFace** credentials in the child workflow\n6. Click **Execute Workflow** to run the full pipeline",
-        "height": 304,
-        "width": 352
+        "content": "### Pipeline Overview\nFetch repos → Filter (skip MP-Python-Scripts) → Loop → Child embeds each repo into Pinecone.",
+        "height": 100,
+        "width": 404
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        0,
-        624
-      ],
       "typeVersion": 1,
-      "id": "d4049a32-926b-4dc1-b415-1abc33bb1197",
+      "position": [
+        -112,
+        608
+      ],
+      "id": "e4e5c521-9e7e-4e21-8b96-13e8c7757650",
       "name": "Note: Setup"
     },
     {
       "parameters": {
-        "content": "### 🏗️ Architecture Overview\n\n```\nParent (this workflow)\n  │\n  ├─ Fetches all repos from GitHub org\n  │\n  └─ For each repo (one-by-one):\n      │\n      └─ Calls Child Workflow\n          ├─ Lists files recursively\n          ├─ Filters out junk dirs (.git, .venv, node_modules…)\n          ├─ Filters files by extension (.py, .md, .lua…)\n          ├─ Fetches file content via GitHub API\n          └─ Embeds into Pinecone (namespace = repo name)\n```\n\n**Vector DB:** Pinecone (index: `foxtrot`)\n**Embeddings:** HuggingFace Inference API"
+        "content": "### Architecture\nParent fetches → loops → Child (lists files → filters → fetches → embeds to Pinecone).",
+        "height": 112,
+        "width": 460
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        688,
-        624
-      ],
       "typeVersion": 1,
-      "id": "4ad42c06-942d-4781-a8c5-11c6f9a511cf",
-      "name": "Note: Architecture"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "3c0cb4e3-bd23-4386-9010-a4460483cd72",
-              "leftValue": "={{ $json.name }}",
-              "rightValue": "MP-Python-Scripts",
-              "operator": {
-                "type": "string",
-                "operation": "notEquals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.3,
       "position": [
         576,
-        416
+        608
       ],
-      "id": "af66b384-1191-4d5c-a9ad-030a05071f43",
-      "name": "Filter"
+      "id": "25d674ad-b214-4264-b696-32700d112174",
+      "name": "Note: Architecture"
     }
   ],
   "pinData": {},
@@ -226,7 +205,7 @@
       "main": [
         [
           {
-            "node": "Filter",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -255,17 +234,6 @@
           }
         ]
       ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "active": false,
@@ -273,10 +241,11 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "0401a606-567c-469f-a6b4-b6fcf7677bfc",
+  "versionId": "76426e82-00de-4307-b53d-6974702ff1a4",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "84477c8594e4e5fa1a85df07d16feed30068678c5643e6e958310722165b467f"
   },
-  "id": "UOGHrWIJhm1hlRm33fGtH",
+  "id": "wOqArPcVj-IovcrgI72hf",
   "tags": []
 }

@@ -19,9 +19,11 @@
 - [Tech Stack](#-tech-stack)
 - [Architecture Overview](#-architecture-overview)
 - [Project Structure](#-project-structure)
+- [RAG Agent Workflow](#-rag-agent-workflow)
 - [Data Ingestion Pipeline](#-data-ingestion-pipeline)
   - [Parent Workflow](#parent-workflow--foxtrot_dataflow_parent)
   - [Child Workflow](#child-workflow--foxtrot_dataflow_child)
+  - [Google Drive Workflow](#google-drive-workflow--dataflow_googledrive)
 - [Deploying to Vercel](#-deploying-to-vercel-password-reset)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -70,6 +72,12 @@ FoxBrain will:
 - 🧠 **Context-Aware** — Understands code, docs, and notebooks in depth
 - 💬 **Conversational** — Maintains chat history for natural dialogue
 
+<p align="center">
+  <img src="Frontend/foxbrain-app.png" alt="FoxBrain AI Chat Interface" width="900" />
+  <br/>
+  <em>FoxBrain AI — Chat interface for Team Foxtrot freshers</em>
+</p>
+
 ---
 
 ## 🏗 Architecture Overview
@@ -102,12 +110,13 @@ SDES_Chatbot/
 │
 ├── 📄 README.md                              # Documentation
 ├── 📄 LICENSE                                 # Project license
-├── 🤖 RAGAgent.json                          # n8n RAG Agent workflow
 ├── Backend/
-│   ├── RAGAgent.json                         # RAG Agent configuration
-│   └── Dataflow/
-│       ├── Foxtrot_DataFlow_Parent.json      # Parent orchestrator workflow
-│       └── Foxtrot_DataFlow_Child.json       # Per-repo processing workflow
+│   ├── RAGAgent.json                         # RAG Agent (chat) workflow
+│   ├── Dataflow/
+│   │   ├── Foxtrot_DataFlow_Parent.json      # Parent orchestrator workflow
+│   │   ├── Foxtrot_DataFlow_Child.json       # Per-repo processing workflow
+│   │   └── Dataflow_GoogleDrive.json         # Google Drive ingestion workflow
+│   └── *.png                                 # Workflow screenshots
 │
 └── Frontend/
     ├── src/                                  # React source code
@@ -160,6 +169,18 @@ SDES_Chatbot/
 
 ---
 
+## 🤖 RAG Agent Workflow
+
+The **RAGAgent** workflow powers the FoxBrain AI chat interface. It receives user messages from the frontend via webhook, retrieves relevant context from Pinecone, and generates answers using Google Gemini.
+
+**Flow:** Webhook → AI Agent (Gemini + Pinecone retrieval) → Respond to Webhook
+
+<p align="center">
+  <img src="Backend/rag-agent-workflow.png" alt="RAG Agent Workflow" width="800" />
+</p>
+
+---
+
 ## 🔄 Data Ingestion Pipeline
 
 The data pipeline is built using **n8n** workflows in a **Parent-Child architecture** to systematically crawl all repositories in the `Team-Foxtrot-GIKI` GitHub organization, extract relevant files, and embed them into the Pinecone vector database for retrieval by the RAG agent.
@@ -202,6 +223,10 @@ Call Child Workflow (per repo)
 | **Error Handling** | Retry enabled with fallback |
 | **Est. Runtime** | ~5–10 minutes per repository |
 
+<p align="center">
+  <img src="Backend/foxtrot-dataflow-parent.png" alt="Foxtrot DataFlow Parent Workflow" width="800" />
+</p>
+
 ---
 
 ### Child Workflow — `Foxtrot_DataFlow_Child`
@@ -239,6 +264,22 @@ Apply Dir Filter    Apply File Type Filter
 3. **File Type Filtering** — Only process supported file extensions
 4. **Content Extraction** — Fetch file content from GitHub
 5. **Embedding & Storage** — Convert file content to embeddings using HuggingFace API and store in Pinecone
+
+<p align="center">
+  <img src="Backend/foxtrot-dataflow-child.png" alt="Foxtrot DataFlow Child Workflow" width="800" />
+</p>
+
+---
+
+### Google Drive Workflow — `Dataflow_GoogleDrive`
+
+Ingests files from a **Google Drive folder** (Foxtrot) into Pinecone. Use this for documentation or files not stored in GitHub.
+
+**Flow:** Manual Trigger → Search folder → Download files → Embed into Pinecone
+
+<p align="center">
+  <img src="Backend/dataflow-google-drive.png" alt="Dataflow Google Drive Workflow" width="800" />
+</p>
 
 ---
 

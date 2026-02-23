@@ -2,15 +2,49 @@
   "name": "Dataflow_GoogleDrive",
   "nodes": [
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
+      "parameters": {
+        "content": "### Step 2 · Search\nLists files in Foxtrot folder.",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        1408,
+        1168
       ],
-      "id": "c2de2dfa-2510-40f5-a215-bf444be873d4",
-      "name": "When clicking ‘Execute workflow’"
+      "id": "a9d4f914-b20a-46b5-8ebc-48041f7b1dd6",
+      "name": "Note: Search"
+    },
+    {
+      "parameters": {
+        "content": "### Step 3 · Download\nFetches file content from Drive.",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        1168
+      ],
+      "id": "1e503974-2939-4e62-bc11-3bb2138c0090",
+      "name": "Note: Download"
+    },
+    {
+      "parameters": {
+        "content": "### Step 4 · Embed\nHuggingFace embeddings → Pinecone (foxtrot index).",
+        "height": 88,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        1152
+      ],
+      "id": "c5922281-e0af-4330-9ae1-fcebf08c4857",
+      "name": "Note: Embed"
     },
     {
       "parameters": {
@@ -29,10 +63,10 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        208,
-        0
+        1472,
+        1264
       ],
-      "id": "ba7ee1cd-612c-4ee1-9ff2-26e5051a629c",
+      "id": "620e44ff-3f64-4eaa-83fd-833f54fafcd8",
       "name": "Search files and folders",
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -54,41 +88,15 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        416,
-        0
+        1680,
+        1264
       ],
-      "id": "840127e7-8f35-42ee-b7c0-581e60cf7210",
+      "id": "906ed2d2-f6f4-4504-9fa5-cabb597e6ca4",
       "name": "Download file",
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "njW4OhldpH2Hw5CD",
           "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "mode": "insert",
-        "pineconeIndex": {
-          "__rl": true,
-          "value": "foxtrot",
-          "mode": "list",
-          "cachedResultName": "foxtrot"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
-      "typeVersion": 1.3,
-      "position": [
-        624,
-        0
-      ],
-      "id": "5e366c70-c11b-4a61-8015-eabc4b7e8e65",
-      "name": "Pinecone Vector Store",
-      "credentials": {
-        "pineconeApi": {
-          "id": "vBWyTZCJj0o7FHuF",
-          "name": "PineconeApi account"
         }
       }
     },
@@ -100,10 +108,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        624,
-        208
+        1888,
+        1472
       ],
-      "id": "0a8f7f5f-7ed2-4fea-b477-da7970d6c494",
+      "id": "bc67978a-5de7-451f-89f7-35a3627c3b69",
       "name": "Embeddings HuggingFace Inference",
       "credentials": {
         "huggingFaceApi": {
@@ -129,26 +137,82 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        768,
-        208
+        2032,
+        1472
       ],
-      "id": "49e9efa4-f3c5-4558-b40c-06d16166224d",
+      "id": "f71f642c-5df8-4d02-a25b-5c8fa8121143",
       "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "foxtrot",
+          "mode": "list",
+          "cachedResultName": "foxtrot"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1888,
+        1264
+      ],
+      "id": "e4d9940d-6a2d-4d5f-b007-773cfc3190e5",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "vBWyTZCJj0o7FHuF",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 1. Setup\nConfigure Google Drive folder ID (Foxtrot). Add Pinecone + HuggingFace credentials.",
+        "height": 116,
+        "width": 484
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        944,
+        1008
+      ],
+      "id": "f6b27f60-e73e-4a96-8976-833e762e774f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### Step 1 · Trigger\nExecute workflow manually.",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        1168
+      ],
+      "id": "6f89d95a-24d5-4188-a77f-added9eb1b7d",
+      "name": "Note: Trigger1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        1264
+      ],
+      "id": "751a9ab6-b159-42c5-98d3-9666c57b022e",
+      "name": "When clicking ‘Execute workflow’"
     }
   ],
   "pinData": {},
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Search files and folders",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Search files and folders": {
       "main": [
         [
@@ -192,6 +256,17 @@
           }
         ]
       ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -200,11 +275,11 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "6d4edc43-7b45-4625-8e4a-c533bc22d486",
+  "versionId": "cfe027f1-34ba-4578-8b0b-ce84d9e6beba",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4b236d6a0553c9e875e34c327be292e58e9d17db4065ace6cec462abff30df1b"
   },
-  "id": "VZPnWFxtbLm8dVMD",
+  "id": "0OB5cX8dNwtfNVeN",
   "tags": []
 }

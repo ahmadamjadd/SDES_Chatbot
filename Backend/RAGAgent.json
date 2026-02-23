@@ -3,19 +3,102 @@
   "nodes": [
     {
       "parameters": {
+        "content": "## 1. Setup\nWebhook receives chat from frontend. Ensure prompt includes `message` + formatted `history` (role: content).",
+        "height": 140,
+        "width": 420,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -64
+      ],
+      "id": "0304afe4-5ff4-495c-aa60-2468ac6f5b3a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### 2. Incoming Request\nPOST webhook triggers the RAG chain.",
+        "height": 228,
+        "width": 220,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        112
+      ],
+      "id": "859e9fb3-dfb3-45f6-9b52-ae537066261d",
+      "name": "Note: Webhook"
+    },
+    {
+      "parameters": {
+        "content": "### 3. RAG Pipeline\nGemini + Pinecone retrieval. Answers from Team Foxtrot codebase only.",
+        "height": 596,
+        "width": 636,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        128
+      ],
+      "id": "91209703-2b15-42f8-af5a-584b14e8431c",
+      "name": "Note: RAG Pipeline"
+    },
+    {
+      "parameters": {
+        "content": "### 4. Response\nSends AI reply back to frontend.",
+        "height": 260,
+        "width": 232,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        816,
+        128
+      ],
+      "id": "4ee7d303-52da-4772-a52f-1ff2ee8df9dd",
+      "name": "Note: Response"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "de82c344-f9dd-466d-ae72-7fc7eedb5dc2",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        208
+      ],
+      "id": "bc4ba830-12dd-42f1-8fa5-bf600edcdd5a",
+      "name": "Webhook",
+      "webhookId": "de82c344-f9dd-466d-ae72-7fc7eedb5dc2"
+    },
+    {
+      "parameters": {
         "promptType": "define",
         "text": "={{ $json.body.message }}\n\nConversation history:\n{{ ($json.body.history || []).map(h => `${h.role}: ${h.content}`).join('\\n') }}",
         "options": {
-          "systemMessage": "\"You are FoxBrain, Team Foxtrot's technical assistant. Answer based on the retrieved context from the vector store. If the context is partially relevant, do your best to answer. Only say you don't have the information if the retrieved context is completely unrelated. Always cite the file name and repository when referencing code.\""
+          "systemMessage": "You are FoxBrain, the official AI knowledge assistant for Team Foxtrot (SDES) at GIKI. Your role is to help freshers understand the team's repositories, codebases, architecture, workflows, and technical concepts using the retrieved context from the vector database. Always base your answers strictly on the provided retrieved content. If the context is partially relevant, extract the useful parts and clearly explain them. If the context is completely unrelated, politely say you do not have enough information. When explaining, assume the user may be a fresher with limited technical background. Break down complex ideas into simple terms, define technical terminology in easy language, explain why something is used, and describe how components connect together step by step. Avoid unnecessary jargon, and when you must use technical terms, briefly explain them. If referencing code, clearly mention the file name and repository. Maintain a supportive, encouraging tone so users feel comfortable asking follow-up questions. Your goal is not just to answer, but to teach and build understanding."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        0,
-        0
+        352,
+        240
       ],
-      "id": "995f492c-6ebb-4d52-b846-30e7117040d8",
+      "id": "50687f78-7149-4176-8938-bab8264b2ac5",
       "name": "AI Agent"
     },
     {
@@ -26,10 +109,10 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
       "typeVersion": 1,
       "position": [
-        208,
-        288
+        560,
+        528
       ],
-      "id": "afd77755-40e1-443c-b551-95ac9bc4c4cd",
+      "id": "bb794a68-9cf2-43b3-aa68-735905bd0f9c",
       "name": "Embeddings HuggingFace Inference",
       "credentials": {
         "huggingFaceApi": {
@@ -47,10 +130,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -128,
-        208
+        224,
+        432
       ],
-      "id": "6bacf686-5ab8-4f0e-86c3-706642542077",
+      "id": "4f3eaa5d-2c71-43a9-856b-381374acd40d",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -74,10 +157,10 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        208,
-        160
+        560,
+        384
       ],
-      "id": "3f88f1d7-077e-4475-a5aa-21db6934cd26",
+      "id": "e9b05715-500f-44a0-a8c7-1634958f1a73",
       "name": "Pinecone Vector Store1",
       "credentials": {
         "pineconeApi": {
@@ -88,34 +171,15 @@
     },
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "de82c344-f9dd-466d-ae72-7fc7eedb5dc2",
-        "responseMode": "responseNode",
-        "options": {
-          "allowedOrigins": "*"
-        }
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -288,
-        16
-      ],
-      "id": "f2a7195f-c7a5-4f11-bd21-34a71b9d1f88",
-      "name": "Webhook",
-      "webhookId": "de82c344-f9dd-466d-ae72-7fc7eedb5dc2"
-    },
-    {
-      "parameters": {
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        480,
-        48
+        832,
+        240
       ],
-      "id": "d6d88b0e-6912-4207-98ef-eb7909d8deb9",
+      "id": "bbcfa745-c85e-4545-b7d1-e1fd6b74dbc2",
       "name": "Respond to Webhook"
     }
   ],
@@ -177,17 +241,16 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "047a965d-8948-4e8e-9981-cfedd77c2409",
+  "versionId": "e83ef1c3-c274-441f-90a2-341ba045b22f",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "4b236d6a0553c9e875e34c327be292e58e9d17db4065ace6cec462abff30df1b"
   },
-  "id": "n1Z0AWpb932xRPaI",
+  "id": "MfiAtLaHGdpRaRvb",
   "tags": []
 }
