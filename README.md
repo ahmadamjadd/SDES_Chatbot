@@ -24,6 +24,7 @@
   - [Parent Workflow](#parent-workflow--foxtrot_dataflow_parent)
   - [Child Workflow](#child-workflow--foxtrot_dataflow_child)
   - [GrandChild Workflow](#grandchild-workflow--foxtrot_dataflow_grandchild)
+  - [Live GitHub Commit Workflow](#live-github-commit-workflow--live_github_commit_pinecone_update)
   - [Google Drive Workflow](#google-drive-workflow--dataflow_googledrive)
 - [Deploying to Vercel](#-deploying-to-vercel-password-reset)
 - [Contributing](#-contributing)
@@ -117,6 +118,7 @@ SDES_Chatbot/
 │   │   ├── Foxtrot_DataFlow_Parent.json      # Parent orchestrator workflow
 │   │   ├── Foxtrot_DataFlow_Child.json       # Per-repo branch discovery workflow
 │   │   ├── Foxtrot_DataFlow_GrandChild.json  # Per-branch file processing workflow
+│   │   ├── Live_GitHub_Commit_Pinecone_Update.json  # Live webhook for auto-sync
 │   │   └── Dataflow_GoogleDrive.json         # Google Drive ingestion workflow
 │   └── *.png                                 # Workflow screenshots
 │
@@ -361,6 +363,76 @@ Dir Exclusion    File Type Filter
 
 <p align="center">
   <img src="Backend/foxtrot-dataflow-GrandChild.png" alt="Foxtrot DataFlow GrandChild Workflow" width="800" />
+</p>
+
+---
+
+### Live GitHub Commit Workflow — `Live_GitHub_Commit_Pinecone_Update`
+
+A **real-time webhook-based workflow** that automatically keeps FoxBrain's knowledge base in sync with the latest code changes. Whenever a developer pushes code to any repository in the GitHub organization, this workflow instantly updates Pinecone — no manual re-ingestion required.
+
+**Purpose:** Listens for GitHub push events via webhook, extracts modified files, deletes outdated vectors, and embeds the fresh code into Pinecone automatically.
+
+**Flow:**
+```
+GitHub Push Event (Webhook)
+              │
+              ▼
+Extract Push Metadata (JS)
+  • repo_name, branch_name
+  • path, filename
+  • for each added/modified file
+              │
+              ▼
+Delete Old Vectors (Pinecone)
+  • Filter by repo + branch + filePath
+  • Prevents duplicate/conflicting chunks
+              │
+              ▼
+Download Fresh Code (GitHub API)
+  • Uses Accept: application/vnd.github.v3.raw
+  • Fetches from specific branch
+              │
+              ▼
+Insert New Vectors (Pinecone)
+  • HuggingFace embeddings
+  • Full metadata (repo, branch, path, etc.)
+```
+
+**Key Features:**
+- **Webhook-Based** — Triggered automatically on every `git push` to the organization
+- **Self-Cleaning** — Deletes outdated vectors before inserting new ones to prevent duplicate or conflicting information
+- **Branch-Aware** — Tracks which branch each file came from using the `ref` field
+- **Incremental Updates** — Only processes files that were actually added or modified in the commit, not the entire repository
+- **Same Metadata Schema** — Uses identical metadata fields as the batch ingestion workflows for consistency
+
+**How It Works:**
+
+1. **Webhook Trigger** — GitHub sends a POST request to `/github-org-push` endpoint whenever code is pushed
+2. **Metadata Extraction** — JavaScript parses the push payload and extracts file paths for all `added` and `modified` files in each commit
+3. **Vector Cleanup** — For each file, queries Pinecone and deletes existing vectors matching `{repo, branch, filePath}` to prevent stale data
+4. **Content Fetching** — Downloads the raw file content from GitHub using branch-specific URLs
+5. **Re-Embedding** — Chunks the fresh code, generates embeddings via HuggingFace, and inserts into Pinecone with full metadata
+
+**Configuration:**
+| Property | Value |
+|---|---|
+| **Trigger Type** | Webhook (POST) |
+| **Webhook Path** | `/github-org-push` |
+| **GitHub Event** | `push` |
+| **Processing** | Per-file (added + modified only) |
+| **Vector Cleanup** | Automatic (filter by repo/branch/path) |
+| **Status** | Active (always listening) |
+
+**Why This Matters:**
+
+Without this workflow, FoxBrain would only know about code that existed during the last manual batch ingestion. With live updates enabled:
+- Freshers always get answers based on the **latest code**
+- Bug fixes and new features are immediately searchable
+- No need to manually re-run the Parent → Child → GrandChild pipeline after every commit
+
+<p align="center">
+  <img src="Backend/Live_GitHub_Commit_Pinecone_Update.png" alt="Live GitHub Commit Pinecone Update Workflow" width="800" />
 </p>
 
 ---
